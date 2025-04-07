@@ -84,6 +84,29 @@ export default {
             this.configs.volume = value
             this.saveCfg()
         },
+        getName(bpm: number) {
+            if (bpm < 24) {
+                return 'Larghissimo'
+            } else if (bpm < 40) {
+                return 'Grave'
+            } else if (bpm < 60) {
+                return 'Largo'
+            } else if (bpm < 66) {
+                return 'Larghetto'
+            } else if (bpm < 77) {
+                return 'Adagio'
+            } else if (bpm < 109) {
+                return 'Andante'
+            } else if (bpm < 121) {
+                return 'Moderato'
+            } else if (bpm < 169) {
+                return 'Allegro'
+            } else if (bpm < 200) {
+                return 'Presto'
+            } else {
+                return 'Prestissimo'
+            }
+        },
         playSound(ctx: AudioContext, type: number, time: number, delay: number) {
             // 0: Rest, 1: Weak, 2: Medium, 3: Strong
             // 0:  0, 1: 1, 2: 2^(2/12), 3: 2^(4/12)
@@ -197,6 +220,9 @@ export default {
                 <BeatBlock :index="index" :initValue="item" @change="changeBeatSeqItem" />
             </div>
         </div>
+        <div id="speedName">
+            <h2>{{ getName(configs.bpm) }}</h2>
+        </div>
         <div id="controls">
             <div id="controlBtns">
                 <button @click="startPlay">Start</button>
@@ -212,10 +238,7 @@ export default {
             <div>
                 <label for="timeSig">Beats per measure</label>
                 <div class="flexVertical">
-                    <!-- beatSeq.len / timeSig -->
-                    <div id="beatSeqSelect">
-                        <Slider :initValue=configs.beatSeqLen :min=1 :max=32 :threshold=20 @change="changeBeatSeq" />
-                    </div>
+                    <Slider :initValue=configs.beatSeqLen :min=1 :max=32 :threshold=20 @change="changeBeatSeq" />
                 </div>
             </div>
             <div>
@@ -235,7 +258,8 @@ export default {
             <div id="fullScreenControl">
                 <label for="fullScreen">Full Screen</label>
                 <div>
-                    <input type="checkbox" id="fullScreen" v-model="configs.isFullScreen" @change="changeFullScreen" />
+                    <input type="checkbox" id="fullScreenInput" v-model="configs.isFullScreen"
+                        @change="changeFullScreen" />
                 </div>
             </div>
         </div>
@@ -257,7 +281,7 @@ export default {
 </template>
 <style scoped>
 #mainDiv {
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -266,29 +290,48 @@ export default {
     font-size: 18px;
 }
 
+#speedName {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 20px;
+}
+
 /* 类table布局, label, div 左对齐相同位置 */
 #controls {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: left;
-    margin: 40px;
+    margin: 20px;
 }
 
-#controls label {
-    width: 180px;
-    text-align: left;
-    margin: auto 0px;
-}
 
 #controls div {
+    width: 100%;
     display: flex;
     margin: 5px;
 }
 
+#controls div label {
+    width: 30%;
+    text-align: left;
+    margin: auto 0px;
+}
+
 #controls div div {
-    display: flex;
     margin: 0px;
+    width: 70%;
+}
+
+#controls div div div {
+    width: 100%;
+}
+
+#controls div div span {
+    width: 0px;
 }
 
 .flexVertical {
@@ -319,12 +362,17 @@ export default {
     font-size: 20px;
 }
 
-#fullScreenControl input {
+#fullScreenControl div {
+    width: 100%;
+}
+
+#fullScreenInput {
     width: 24px;
     height: 24px;
     background-color: #ffffff;
     cursor: pointer;
-    margin-left: 10px;
+    margin: auto;
+
 }
 
 #infos {

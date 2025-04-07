@@ -281,7 +281,7 @@ export default {
 </template>
 <style scoped>
 #mainDiv {
-    max-width: 600px;
+    max-width: 500px;
     width: 100%;
     -webkit-user-select: none;
     -moz-user-select: none;

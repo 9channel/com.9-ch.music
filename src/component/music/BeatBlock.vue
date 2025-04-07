@@ -38,7 +38,7 @@ export default {
 <style scoped>
 .beatblock div {
     width: 100%;
-    height: 100px;
+    height: 120px;
     background-color: #ffffff;
     border-radius: 5px;
     border: 1px solid #000000;

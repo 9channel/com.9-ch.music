@@ -113,7 +113,8 @@ export default {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    width: 40px;
+    width: 100%;
+    background-color: #77ecec88;
 }
 
 .slider div {

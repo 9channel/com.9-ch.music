@@ -65,8 +65,16 @@ export default {
             this.saveCfg()
         },
         changeBeatSeqItem(index: number, value: number) {
+            if (this.scheduler !== null) {
+                this.stopPlay()
+            }
             console.log('changeBeatSeqItem', index, value)
             this.configs.beatSeq[index] = value
+            if (!this.audioCtx) {
+                this.audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+            }
+            const time = this.audioCtx.currentTime
+            this.playSound(this.audioCtx, value, time, 0.2)
             this.saveCfg()
         },
         changeSoundFreq(value: number) {
@@ -172,6 +180,14 @@ export default {
                 this.audioCtx = null
             }
         },
+        switchPlay() {
+            console.log('switchPlay')
+            if (this.scheduler) {
+                this.stopPlay()
+            } else {
+                this.startPlay()
+            }
+        }
     },
     beforeMount() {
         let cfg = localStorage.getItem('cfg-metronome')
@@ -225,8 +241,9 @@ export default {
         </div>
         <div id="controls">
             <div id="controlBtns">
-                <button @click="startPlay">Start</button>
-                <button @click="stopPlay">Stop</button>
+                <button @click="switchPlay" :class="['btn', scheduler !== null ? 'btnStop' : 'btnStart']">
+                    {{ scheduler !== null ? 'Stop' : 'Start' }}
+                </button>
                 <button @click="resetCfg">Reset</button>
             </div>
             <div>
@@ -236,7 +253,7 @@ export default {
                 </div>
             </div>
             <div>
-                <label for="timeSig">Beats per measure</label>
+                <label for="timeSig">Notes per measure</label>
                 <div class="flexVertical">
                     <Slider :initValue=configs.beatSeqLen :min=1 :max=32 :threshold=20 @change="changeBeatSeq" />
                 </div>
@@ -316,14 +333,14 @@ export default {
 }
 
 #controls div label {
-    width: 30%;
+    width: 40%;
     text-align: left;
     margin: auto 0px;
 }
 
 #controls div div {
     margin: 0px;
-    width: 70%;
+    width: 60%;
 }
 
 #controls div div div {
@@ -332,6 +349,9 @@ export default {
 
 #controls div div span {
     width: 0px;
+    margin: auto -30px;
+    /* 点击穿透 */
+    pointer-events: none;
 }
 
 .flexVertical {
@@ -349,7 +369,7 @@ export default {
 
 #controlBtns {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
 }
 
 #controlBtns button {
@@ -360,6 +380,16 @@ export default {
     border: 1px solid #000000;
     cursor: pointer;
     font-size: 20px;
+}
+
+#controlBtns button:hover {
+    background-color: #0085f2;
+    color: #ffffff;
+}
+
+#controlBtns button.btnStop {
+    background-color: #ff0000;
+    color: #ffffff;
 }
 
 #fullScreenControl div {

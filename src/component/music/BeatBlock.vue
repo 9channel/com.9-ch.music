@@ -27,11 +27,9 @@ export default {
 }
 </script>
 <template>
-    <div class="beatblock">
-        <div @click="handleClick">
-            <div class="subblock">
-                <div v-for="i in value" :key="i" :style="{ backgroundColor: `rgba(21, 255, 21, ${0.2 * i})` }"></div>
-            </div>
+    <div class="beatblock" @click="handleClick">
+        <div class="subblock">
+            <div v-for="i in value" :key="i" :style="{ backgroundColor: `rgba(21, 255, 21, ${0.2 * i})` }"></div>
         </div>
     </div>
 </template>
@@ -40,14 +38,14 @@ export default {
     width: 100%;
     height: 120px;
     background-color: #ffffff;
-    border-radius: 5px;
-    border: 1px solid #000000;
+    border: 1px solid #cdcdcd;
     cursor: pointer;
-    font-size: 20px;
-    font-weight: bold;
-    /* 下对齐 */
-    display: flex;
-    align-items: end
+    border-radius: 0.25rem;
+}
+
+.beatblock:hover {
+    border-color: #0085f2;
+    box-shadow: 0 0 5px rgba(0, 144, 237, 0.4);
 }
 
 .subblock {
@@ -60,5 +58,7 @@ export default {
 .subblock div {
     height: 33.33%;
     width: 100%;
+    border: 1px solid #cdcdcd;
+    border-radius: 0.25rem;
 }
 </style>

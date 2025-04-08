@@ -29,6 +29,7 @@ export default {
             audioCtx: null as AudioContext | null,
             scheduler: null as number | null,
             currentIndex: 0,
+            beatBlocks: [] as HTMLElement[],
         }
     },
     methods: {
@@ -154,6 +155,16 @@ export default {
             this.currentIndex = 0
             // init scheduler
             const interval = 60000 / this.configs.bpm
+            // load from beatTunner 
+            this.beatBlocks = []
+            const beatTunner = document.getElementById('beatTunner')
+            if (beatTunner) {
+                const beatBlocks = beatTunner.getElementsByClassName('beatblock')
+                for (let i = 0; i < beatBlocks.length; i++) {
+                    const block = beatBlocks[i] as HTMLElement
+                    this.beatBlocks.push(block)
+                }
+            }
             this.scheduler = setInterval(() => {
                 if (!this.audioCtx) {
                     this.audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -163,6 +174,15 @@ export default {
                     this.currentIndex = 0
                 }
                 const type = this.configs.beatSeq[this.currentIndex]
+                // highlight the block
+                for (let i = 0; i < this.beatBlocks.length; i++) {
+                    const block = this.beatBlocks[i]
+                    if (i === this.currentIndex) {
+                        block.classList.add('active')
+                    } else {
+                        block.classList.remove('active')
+                    }
+                }
                 this.playSound(this.audioCtx, type, time, 0.2)
                 this.currentIndex++
             }, interval)
@@ -179,6 +199,12 @@ export default {
                 this.audioCtx.close()
                 this.audioCtx = null
             }
+            // remove highlight
+            for (let i = 0; i < this.beatBlocks.length; i++) {
+                const block = this.beatBlocks[i]
+                block.classList.remove('active')
+            }
+            this.beatBlocks = []
         },
         switchPlay() {
             console.log('switchPlay')

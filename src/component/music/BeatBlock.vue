@@ -13,6 +13,7 @@ export default {
     data() {
         return {
             value: this.initValue,
+            isActive: false,
         };
     },
     methods: {
@@ -27,7 +28,7 @@ export default {
 }
 </script>
 <template>
-    <div class="beatblock" @click="handleClick">
+    <div @click="handleClick" :class="['beatblock', { active: isActive }]">
         <div class="subblock">
             <div v-for="i in value" :key="i" :style="{ backgroundColor: `rgba(21, 255, 21, ${0.2 * i})` }"></div>
         </div>
@@ -43,9 +44,14 @@ export default {
     border-radius: 0.25rem;
 }
 
+.beatblock.active {
+    border-color: #0085f2;
+    box-shadow: 0 0 10px rgba(0, 144, 237, 0.6);
+}
+
 .beatblock:hover {
     border-color: #0085f2;
-    box-shadow: 0 0 5px rgba(0, 144, 237, 0.4);
+    box-shadow: 0 0 10px rgba(0, 144, 237, 0.6);
 }
 
 .subblock {

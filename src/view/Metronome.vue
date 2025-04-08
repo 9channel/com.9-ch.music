@@ -253,7 +253,7 @@ export default {
                 </div>
             </div>
             <div>
-                <label for="timeSig">Notes per measure</label>
+                <label for="timeSig">Per measure</label>
                 <div class="flexVertical">
                     <Slider :initValue=configs.beatSeqLen :min=1 :max=32 :threshold=20 @change="changeBeatSeq" />
                 </div>
@@ -333,14 +333,14 @@ export default {
 }
 
 #controls div label {
-    width: 40%;
+    width: 30%;
     text-align: left;
     margin: auto 0px;
 }
 
 #controls div div {
     margin: 0px;
-    width: 60%;
+    width: 70%;
 }
 
 #controls div div div {

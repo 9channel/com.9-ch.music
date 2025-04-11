@@ -285,7 +285,7 @@ export default {
                 </div>
             </div>
             <div>
-                <label for="soundFreq">Base Frequency</label>
+                <label for="soundFreq">Frequency</label>
                 <div>
                     <Slider :initValue=configs.soundFreq :min=20 :max=20000 :threshold=5 @change="changeSoundFreq" />
                     <span>Hz</span>

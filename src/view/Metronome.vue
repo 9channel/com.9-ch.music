@@ -8,9 +8,11 @@ interface Configs {
     soundFreq: number;
     beatSeqLen: number;
     beatSeq: number[];
+    forceScreenOn: boolean;
 }
 import Slider from '@/component/common/Slider.vue'
 import BeatBlock from '@/component/music/BeatBlock.vue'
+import NoSleep from 'nosleep.js';
 export default {
     components: {
         Slider, BeatBlock
@@ -25,11 +27,13 @@ export default {
                 isFullScreen: false,
                 beatSeqLen: 4,
                 beatSeq: [3, 1, 1, 1],
+                forceScreenOn: false,
             }),
             audioCtx: null as AudioContext | null,
             scheduler: null as number | null,
             currentIndex: 0,
             beatBlocks: [] as HTMLElement[],
+            noSleep: new NoSleep(),
         }
     },
     methods: {
@@ -50,6 +54,10 @@ export default {
             window.location.reload()
         },
         changeFullScreen() {
+            this.saveCfg()
+            window.location.reload()
+        },
+        changeForceScreenOn() {
             this.saveCfg()
             window.location.reload()
         },
@@ -252,6 +260,14 @@ export default {
             }
         }
         localStorage.setItem('latestRoute', '/metronome')
+        // nosleep
+        if (this.configs.forceScreenOn) {
+            const enableNoSleep = () => {
+                document.removeEventListener('click', enableNoSleep, false)
+                this.noSleep.enable()
+            }
+            document.addEventListener('click', enableNoSleep, false)
+        }
     },
 }
 </script>
@@ -300,9 +316,16 @@ export default {
             </div>
             <div id="fullScreenControl">
                 <label for="fullScreen">Full Screen</label>
-                <div>
+                <div class="ctlCheckboxDiv">
                     <input type="checkbox" id="fullScreenInput" v-model="configs.isFullScreen"
                         @change="changeFullScreen" />
+                </div>
+            </div>
+            <div id="forceScreenOnControl">
+                <label for="forceScreenOn">Force Screen On</label>
+                <div class="ctlCheckboxDiv">
+                    <input type="checkbox" id="forceScreenOnInput" v-model="configs.forceScreenOn"
+                        @change="changeForceScreenOn" />
                 </div>
             </div>
         </div>
@@ -312,12 +335,14 @@ export default {
                 1. 点击方块可以改变节拍类型（休止、弱拍、次强拍、强拍）<br />
                 2. 左右滑动调整节拍速度, 每小节拍数, 基础频率, 音量<br />
                 3. 本页面支持PWA离线使用, 可以添加到桌面, 以类似App的方式使用<br />
+                4. 为了避免移动设备锁屏导致节拍器停止, 可以开启强制屏幕常亮功能<br />
             </div>
             <div id="en-US" style="display: none;">
                 <h3>How to use:</h3>
                 1. Click on the block to change the beat type (Rest, Weak, Medium, and Strong)<br />
                 2. Slide left and right to adjust the BPM, beats per measure, base frequency, and volume<br />
                 3. This page supports PWA offline use, and can be added to the desktop for use like an app<br />
+                4. To avoid the metronome stopping due to screen lock on mobile devices, you can enable the force screen on feature<br />
             </div>
         </div>
     </div>
@@ -418,17 +443,22 @@ export default {
     color: #ffffff;
 }
 
-#fullScreenControl div {
-    width: 100%;
+.ctlCheckboxDiv {
+    width: 30% !important;
 }
 
-#fullScreenInput {
+#fullScreenControl label,
+#forceScreenOnControl label {
+    width: 50% !important;
+}
+
+#fullScreenInput,
+#forceScreenOnInput {
     width: 24px;
     height: 24px;
     background-color: #ffffff;
     cursor: pointer;
     margin: auto;
-
 }
 
 #infos {
